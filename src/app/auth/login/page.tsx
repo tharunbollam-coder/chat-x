@@ -1,13 +1,27 @@
-import Link from "next/link"
+"use client";
+import { useDispatch, useSelector } from "react-redux";
+import { login, logout } from "../../../redux/slices/authSlice";
+import { RootState } from "../../../redux/store";
+import Link from "next/link";
 
 const LoginPage: React.FC = () => {
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
+
+  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    dispatch(login());
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-600 to-blue-500">
       <div className="w-full max-w-md p-8 space-y-6 bg-white bg-opacity-10 backdrop-blur-md rounded-xl shadow-lg">
         <h2 className="text-2xl font-bold text-white text-center">
           Login to Chat
         </h2>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleLogin}>
           <div>
             <label
               htmlFor="email"
@@ -44,7 +58,10 @@ const LoginPage: React.FC = () => {
           </button>
           <p className="text-center text-white text-sm">
             Don't have an account?{" "}
-            <Link href="/auth/register" className="text-blue-300 hover:underline">
+            <Link
+              href="/auth/register"
+              className="text-blue-300 hover:underline"
+            >
               Sign up
             </Link>
           </p>
