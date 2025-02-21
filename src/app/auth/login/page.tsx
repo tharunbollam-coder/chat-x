@@ -3,16 +3,33 @@ import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "../../../redux/slices/authSlice";
 import { RootState } from "../../../redux/store";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+const LoginSchema = z.object({
+  email: z.string().email("Inavalid email"),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
+});
+
+type LoginForm = z.infer<typeof LoginSchema>;
 
 const LoginPage: React.FC = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginForm>({
+    resolver: zodResolver(LoginSchema),
+  });
+
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
 
-  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    dispatch(login());
+  const onSubmitLogin = (data: LoginForm) => {
+    console.log("Login Data:", data);
   };
 
   return (
@@ -21,7 +38,7 @@ const LoginPage: React.FC = () => {
         <h2 className="text-2xl font-bold text-white text-center">
           Login to Chat
         </h2>
-        <form className="space-y-4" onSubmit={handleLogin}>
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmitLogin)}>
           <div>
             <label
               htmlFor="email"
@@ -31,10 +48,14 @@ const LoginPage: React.FC = () => {
             </label>
             <input
               type="email"
+              {...register("email")}
               id="email"
               placeholder="Enter your email"
               className="w-full p-3 mt-1 text-gray-800 bg-white bg-opacity-80 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
+            {errors.email && (
+              <p className="text-red-500">{errors.email.message}</p>
+            )}
           </div>
           <div>
             <label
@@ -44,11 +65,15 @@ const LoginPage: React.FC = () => {
               Password
             </label>
             <input
+              {...register("password")}
               type="password"
               id="password"
               placeholder="Enter your password"
               className="w-full p-3 mt-1 text-gray-800 bg-white bg-opacity-80 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
+            {errors.password && (
+              <p className="text-red-600">{errors.password.message}</p>
+            )}
           </div>
           <button
             type="submit"
