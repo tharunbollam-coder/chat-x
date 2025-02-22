@@ -1,6 +1,6 @@
 "use client";
 import { useDispatch, useSelector } from "react-redux";
-import { login, logout } from "../../../redux/slices/authSlice";
+import { loginRequest} from "../../../redux/slices/authSlice";
 import { RootState } from "../../../redux/store";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -24,12 +24,12 @@ const LoginPage: React.FC = () => {
   });
 
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+  const {loading,error,user} = useSelector(
+    (state: RootState) => state.auth
   );
 
   const onSubmitLogin = (data: LoginForm) => {
-    console.log("Login Data:", data);
+    dispatch(loginRequest(data));
   };
 
   return (
@@ -76,10 +76,11 @@ const LoginPage: React.FC = () => {
             )}
           </div>
           <button
+            disabled={loading}
             type="submit"
             className="w-full px-4 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-300"
           >
-            Login
+            {loading ? "Loging in...": "Login"}
           </button>
           <p className="text-center text-white text-sm">
             Don't have an account?{" "}
@@ -91,6 +92,8 @@ const LoginPage: React.FC = () => {
             </Link>
           </p>
         </form>
+        {error && <p className="text-red-600">{error}</p>}
+        {user && <p>Logged in as {user.email}</p>}
       </div>
     </div>
   );

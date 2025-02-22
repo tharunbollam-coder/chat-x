@@ -1,5 +1,8 @@
 "use client";
 
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { registerRequest } from "../../../redux/slices/authSlice";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,6 +18,9 @@ const RegisterSchema = z.object({
 type RegisterForm = z.infer<typeof RegisterSchema>;
 
 const RegisterPage: React.FC = () => {
+  const dispatch = useDispatch();
+  const { loading, error, user } = useSelector((state: RootState) => state.auth);
+  
   const {
     register,
     handleSubmit,
@@ -24,7 +30,7 @@ const RegisterPage: React.FC = () => {
   });
 
   const onSubmitRegister = (data: RegisterForm) => {
-    console.log(data);
+    dispatch(registerRequest(data));
   };
 
   return (
@@ -39,10 +45,10 @@ const RegisterPage: React.FC = () => {
               htmlFor="name"
               className="block text-sm font-medium text-white"
             >
-              Full Name
+              Username
             </label>
             <input
-              type="text"
+              type="username"
               id="name"
               placeholder="Enter your name"
               className="w-full p-3 mt-1 text-gray-800 bg-white bg-opacity-80 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -92,7 +98,7 @@ const RegisterPage: React.FC = () => {
             type="submit"
             className="w-full px-4 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-300"
           >
-            Sign Up
+            {loading ? "Registering..." : "Register"}
           </button>
           <p className="text-center text-white text-sm">
             Already have an account?{" "}
@@ -101,6 +107,8 @@ const RegisterPage: React.FC = () => {
             </Link>
           </p>
         </form>
+        {error && <p className="text-red-600">{error}</p>}
+        {user && <p>Logged in as {user.email}</p>}
       </div>
     </div>
   );
