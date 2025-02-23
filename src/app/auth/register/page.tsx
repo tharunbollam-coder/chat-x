@@ -6,6 +6,9 @@ import { registerRequest } from "../../../redux/slices/authSlice";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 
 import Link from "next/link";
 
@@ -18,6 +21,7 @@ const RegisterSchema = z.object({
 type RegisterForm = z.infer<typeof RegisterSchema>;
 
 const RegisterPage: React.FC = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const { loading, error, user } = useSelector((state: RootState) => state.auth);
   
@@ -32,6 +36,12 @@ const RegisterPage: React.FC = () => {
   const onSubmitRegister = (data: RegisterForm) => {
     dispatch(registerRequest(data));
   };
+
+  useEffect(() => {
+    if (user) {
+      router.push("/profile");
+    }
+  }, [user, router]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-600 to-blue-500">
@@ -108,7 +118,6 @@ const RegisterPage: React.FC = () => {
           </p>
         </form>
         {error && <p className="text-red-600">{error}</p>}
-        {user && <p>Logged in as {user.email}</p>}
       </div>
     </div>
   );

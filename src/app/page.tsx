@@ -1,5 +1,12 @@
+
+import LoginPage from "./auth/login/page";
+
 const page = () => {
-  return <div>Hello World</div>;
+  return (
+    
+      <LoginPage />
+  
+  );
 };
 
 export default page;

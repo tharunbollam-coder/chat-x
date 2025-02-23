@@ -35,11 +35,17 @@ const authSlice = createSlice({
     ) => {
       state.loading = false;
       state.user = action.payload;
+      localStorage.setItem("user", JSON.stringify(action.payload));
     },
     loginFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
     },
+    logout: (state) => {
+      state.user = null;
+      localStorage.removeItem("user"); // Remove user on logout
+    },
+
     // Registration actions
     registerRequest: (
       state,
@@ -67,6 +73,7 @@ export const {
   loginRequest,
   loginSuccess,
   loginFailure,
+  logout,
   registerRequest,
   registerSuccess,
   registerFailure,
