@@ -39,7 +39,7 @@ const RegisterPage: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      router.push("/profile");
+      router.push("/auth/login");
     }
   }, [user, router]);
 

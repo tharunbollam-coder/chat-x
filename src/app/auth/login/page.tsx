@@ -32,7 +32,7 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      router.push("/profile");
+      router.push("/chat");
     }
   }, [user, router]);
 
